@@ -4,6 +4,8 @@
 # Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 # session persistence, api calls, and more.
 # This sample is built using the handler classes approach in skill builder.
+# https://developer.amazon.com/en-US/docs/alexa/alexa-skills-kit-sdk-for-python/develop-your-first-skill.html
+
 import logging
 import ask_sdk_core.utils as ask_utils
 
@@ -18,34 +20,51 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+# To use handler classes, each request handler is written as a class that implements two methods of 
+# the AbstractRequestHandler class; can_handle and handle.
+# 
+# The can_handle method returns a Boolean value indicating if the request handler can create an 
+# appropriate response for the request. The can_handle method has access to the request type and 
+# additional attributes that the skill may have set in previous requests or even saved from a 
+# previous interaction. The Hello World skill only needs to reference the request information 
+# to decide if each handler can respond to an incoming request.
+
+
+# The LaunchRequest event occurs when the skill is invoked without a specific intent.
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
+    # The can_handle function returns True if the incoming request is a LaunchRequest
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
         return ask_utils.is_request_type("LaunchRequest")(handler_input)
 
+    # The handle function generates and returns a basic greeting response.
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Welcome, you can say Hello or Help. Which would you like to try?"
+        speak_output = "Bem-vindo, você pode dizer Olá ou Ajuda. O que você gostaria de tentar?"
 
         return (
             handler_input.response_builder
-                .speak(speak_output)
-                .ask(speak_output)
-                .response
+                .speak(speak_output) # Calling the .speak() function tells responseBuilder to speak the value of speak_output to the user.
+                .ask(speak_output) # Aguarda o usuário para uma nova Intent. Se comentado, finaliza
+                .response # This converts the responseBuilder’s work into the response that the skill will return
         )
 
 
 class HelloWorldIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
+    # The can_handle function detects if the incoming request is an IntentRequest, 
+    # and returns True if the intent name is HelloWorldIntent. 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return ask_utils.is_intent_name("HelloWorldIntent")(handler_input)
 
+    # The handle function generates and returns a basic "Hello World" response.
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Hello World!"
+        speak_output = "Olá Mundo!"
 
         return (
             handler_input.response_builder
@@ -63,7 +82,7 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "You can say hello to me! How can I help?"
+        speak_output = "Você pode dizer olá para mim! Como posso ajudar?"
 
         return (
             handler_input.response_builder
@@ -82,7 +101,7 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Goodbye!"
+        speak_output = "Adeus!"
 
         return (
             handler_input.response_builder
@@ -99,8 +118,8 @@ class FallbackIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In FallbackIntentHandler")
-        speech = "Hmm, I'm not sure. You can say Hello or Help. What would you like to do?"
-        reprompt = "I didn't catch that. What can I help you with?"
+        speech = "Hmm, não tenho certeza. Você pode dizer Olá ou Ajuda. O que você gostaria de fazer?"
+        reprompt = "Eu não entendi isso. Com o que posso te ajudar"
 
         return handler_input.response_builder.speak(speech).ask(reprompt).response
 
@@ -131,7 +150,7 @@ class IntentReflectorHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         intent_name = ask_utils.get_intent_name(handler_input)
-        speak_output = "You just triggered " + intent_name + "."
+        speak_output = "Você acabou de acionar " + intent_name + "."
 
         return (
             handler_input.response_builder
@@ -154,7 +173,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         # type: (HandlerInput, Exception) -> Response
         logger.error(exception, exc_info=True)
 
-        speak_output = "Sorry, I had trouble doing what you asked. Please try again."
+        speak_output = "Desculpe, eu tive problemas em fazer o que você pediu. Por favor, tente novamente."
 
         return (
             handler_input.response_builder
@@ -167,6 +186,9 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 # payloads to the handlers above. Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
+# The Lambda handler is the entry point for your AWS Lambda function. The following code example creates 
+# a Lambda handler function to route all inbound requests to your skill. The Lambda handler function 
+# creates an SDK skill instance configured with the request handlers that you just created
 
 sb = SkillBuilder()
 
