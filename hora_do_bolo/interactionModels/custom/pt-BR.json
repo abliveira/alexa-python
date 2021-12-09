@@ -1,44 +1,126 @@
 {
   "interactionModel": {
-    "languageModel": {
-      "invocationName": "hora do bolo",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        },
-        {
-          "name": "HelloWorldIntent",
-          "slots": [],
-          "samples": [
-            "olá",
-            "como vai você",
-            "diga oi mundo",
-            "diga oi",
-            "oi",
-            "diga olá mundo",
-            "diga olá"
-          ]
-        },
-        {
-          "name": "AMAZON.FallbackIntent",
-          "samples": []
-        }
-      ],
-      "types": []
-    }
-  },
-  "version": "1"
+      "languageModel": {
+          "invocationName": "hora do bolo",
+          "intents": [
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.FallbackIntent",
+                  "samples": []
+              },
+              {
+                  "name": "CapturaAniversarioIntent",
+                  "slots": [
+                      {
+                          "name": "dia",
+                          "type": "AMAZON.NUMBER"
+                      },
+                      {
+                          "name": "ano",
+                          "type": "AMAZON.NUMBER"
+                      },
+                      {
+                          "name": "mes",
+                          "type": "AMAZON.Month"
+                      }
+                  ],
+                  "samples": [
+                      "eu sou de {dia} {mes} {ano}",
+                      "{dia} {mes} {ano}",
+                      "eu faço aniversário em {dia} de {mes}",
+                      "eu nasci em {dia} de {mes} de {ano}"
+                  ]
+              }
+          ],
+          "types": []
+      },
+      "dialog": {
+          "intents": [
+              {
+                  "name": "CapturaAniversarioIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "dia",
+                          "type": "AMAZON.NUMBER",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.324286228429.997922713381"
+                          },
+                          "validations": [
+                              {
+                                  "type": "isLessThanOrEqualTo",
+                                  "prompt": "Slot.Validation.324286228429.997922713381.854969219481",
+                                  "value": "31"
+                              }
+                          ]
+                      },
+                      {
+                          "name": "ano",
+                          "type": "AMAZON.NUMBER",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.324286228429.450283269806"
+                          }
+                      },
+                      {
+                          "name": "mes",
+                          "type": "AMAZON.Month",
+                          "confirmationRequired": false,
+                          "elicitationRequired": false,
+                          "prompts": {}
+                      }
+                  ]
+              }
+          ],
+          "delegationStrategy": "ALWAYS"
+      },
+      "prompts": [
+          {
+              "id": "Slot.Validation.324286228429.997922713381.854969219481",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Dia inválido. Que dia você nasceu?"
+                  }
+              ]
+          },
+          {
+              "id": "Elicit.Slot.324286228429.997922713381",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Que dia você nasceu?"
+                  }
+              ]
+          },
+          {
+              "id": "Elicit.Slot.324286228429.450283269806",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Que ano você nasceu?"
+                  }
+              ]
+          }
+      ]
+  }
 }

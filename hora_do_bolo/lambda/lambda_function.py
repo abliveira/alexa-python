@@ -41,28 +41,39 @@ class LaunchRequestHandler(AbstractRequestHandler):
     # The handle function generates and returns a basic greeting response.
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Olá! Bem-vindo a Hora do Bolo. Isso foi uma fatia de bolo! Adeus!"
+        speak_output = "Olá! Agora é a Hora do Bolo. Quando é o seu aniversário?"
+        reprompt_text = "Eu nasci em 6 de Novembro de 2014. Quando você nasceu?"
+        
+    # The .ask() function does two things:
+    # - Tells the skill to wait for the user to reply, rather than simply exiting
+    # - Allows you to specify a way to ask the question to the user again, if they don’t respond
+    # A best practice is to make your reprompt text different from your initial speech text.
+    # The user may not have responded for a variety of reasons. The skill should pose the initial question 
+    # again but do so in a natural way. The reprompt should provide more context to help the user provide 
+    # an answer. Specify the reprompt text by creating a new variable named reprompt_text.
 
         return (
             handler_input.response_builder
                 .speak(speak_output) # Calling the .speak() function tells responseBuilder to speak the value of speak_output to the user.
-                #.ask(speak_output) # Aguarda o usuário para uma nova Intent. Se comentado, finaliza
+                .ask(speak_output) # Aguarda o usuário para uma nova Intent. Se comentado, finaliza
                 .response # This converts the responseBuilder’s work into the response that the skill will return
         )
 
 
-class HelloWorldIntentHandler(AbstractRequestHandler):
+class CapturaAniversarioIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
-    # The can_handle function detects if the incoming request is an IntentRequest, 
-    # and returns True if the intent name is HelloWorldIntent. 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("HelloWorldIntent")(handler_input)
+        return ask_utils.is_intent_name("CapturaAniversarioIntent")(handler_input)
 
-    # The handle function generates and returns a basic "Hello World" response.
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Olá Mundo!"
+        slots = handler_input.request_envelope.request.intent.slots
+        ano = slots["ano"].value
+        mes = slots["mes"].value
+        dia = slots["dia"].value
+
+        speak_output = 'Obrigada, eu vou lembrar que você nasceu em {dia} de {mes} de {ano}.'.format(mes=mes, dia=dia, ano=ano)
 
         return (
             handler_input.response_builder
@@ -191,7 +202,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(HelloWorldIntentHandler())
+sb.add_request_handler(CapturaAniversarioIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
